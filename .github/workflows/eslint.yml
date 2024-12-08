@@ -33,7 +33,7 @@ jobs:
           npm i eslint@9.16.0
           npm i eslint-plugin-react@7.37.2
           npm i eslint-plugin-react-hooks@5.0.0
-          npm i eslint-plugin-react-refresh@5.0.0
+          npm i eslint-plugin-react-refresh@0.4.14
           npm i @microsoft/eslint-formatter-sarif@3.1.0
       - name: Run ESLint
         env:
