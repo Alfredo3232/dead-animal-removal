@@ -11,14 +11,23 @@ on:
 jobs:
   eslint:
     name: Run eslint scanning
+
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22.x]
     permissions:
       contents: read
       security-events: write
       actions: read
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
 
       - name: Install ESLint
         run: |
