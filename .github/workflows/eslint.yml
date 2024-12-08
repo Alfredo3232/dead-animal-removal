@@ -1,0 +1,50 @@
+name: ESLint
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+  schedule:
+    - cron: "28 22 * * 5"
+
+jobs:
+  eslint:
+    name: Run eslint scanning
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22.x]
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install ESLint
+        run: |
+          npm i eslint@9.16.0
+          npm i eslint-plugin-react@7.37.2
+          npm i eslint-plugin-react-hooks@5.0.0
+          npm i eslint-plugin-react-refresh@0.4.14
+          npm i @microsoft/eslint-formatter-sarif@3.1.0
+      - name: Run ESLint
+        env:
+          SARIF_ESLINT_IGNORE_SUPPRESSED: "true"
+        run: npx eslint .
+          --format @microsoft/eslint-formatter-sarif
+          -o eslint-results.sarif
+        continue-on-error: true
+
+      - name: Upload analysis results to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: eslint-results.sarif
+          wait-for-processing: true
